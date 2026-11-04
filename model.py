@@ -69,8 +69,23 @@ def load_fashion_mnist(n_train=10000, n_test=2000):
         "y_test": y_test
     }
 
-# Step 2 - FashionDataset (not yet solved)
-# TODO: implement
+# Step 2 - FashionDataset
+class FashionDataset(Dataset):
+    def __init__(self, X, y, mean=0.2860, std=0.3530):
+        # TODO: store X, y, mean, std
+        super().__init__()
+        self.X = X
+        self.y = y
+        self.mean = mean
+        self.std = std
+
+    def __len__(self):
+        # TODO
+        return len(self.X)
+
+    def __getitem__(self, i):
+        # TODO: ((X[i] - mean) / std, y[i])
+        return (((self.X[i] - self.mean) / self.std), self.y[i])
 
 # Step 3 - make_loaders (not yet solved)
 # TODO: implement
