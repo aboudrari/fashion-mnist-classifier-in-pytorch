@@ -87,8 +87,54 @@ class FashionDataset(Dataset):
         # TODO: ((X[i] - mean) / std, y[i])
         return (((self.X[i] - self.mean) / self.std), self.y[i])
 
-# Step 3 - make_loaders (not yet solved)
-# TODO: implement
+# Step 3 - make_loaders
+def make_loaders(data, batch_size=64, val_size=2000, seed=42):
+
+    #Split training data into train and validation
+    X_train = data["X_train"][:-val_size]
+    y_train = data["y_train"][:-val_size]
+
+    X_val = data["X_train"][-val_size:]
+    y_val = data["y_train"][-val_size:]
+
+    # Create Dataset objects
+    train_ds = FashionDataset(X_train, y_train)
+    val_ds = FashionDataset(X_val, y_val)
+    test_ds = FashionDataset(data["X_test"], data["y_test"])
+
+    # Create a seeded generator
+    g = torch.Generator().manual_seed(seed)
+
+    # Create DataLoaders
+    train_loader = DataLoader(
+        train_ds,
+        batch_size=batch_size,
+        shuffle=True,
+        generator=g
+    )
+
+    val_loader = DataLoader(
+        val_ds,
+        batch_size=batch_size,
+        shuffle=False
+    )
+
+    test_loader = DataLoader(
+        test_ds,
+        batch_size=batch_size,
+        shuffle=False
+    )
+
+    # Store dataset sizes
+    sizes = (len(train_ds), len(val_ds), len(test_ds))
+
+    # Return everything in a dictionary
+    return {
+        "train": train_loader,
+        "val": val_loader,
+        "test": test_loader,
+        "sizes": sizes
+    }
 
 # Step 4 - MLP (not yet solved)
 # TODO: implement
