@@ -163,8 +163,24 @@ def count_parameters(model):
         if p.requires_grad
     )
 
-# Step 5 - train_one_epoch (not yet solved)
-# TODO: implement
+# Step 5 - train_one_epoch
+def train_one_epoch(model, loader, loss_fn, optimizer):
+    # TODO: model.train(); per batch: zero_grad, forward, loss, backward, step; return mean batch loss.
+    # train mode 
+    model.train()
+    total = 0 
+    for xb, yb in loader:
+        optimizer.zero_grad()
+        # calculat loss 
+        loss = loss_fn(model(xb), yb)
+        # backward 
+        loss.backward()
+        # optimization 
+        optimizer.step()
+
+        total += loss.item()
+
+    return total / len(loader)
 
 # Step 6 - evaluate (not yet solved)
 # TODO: implement
