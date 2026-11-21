@@ -200,8 +200,58 @@ def evaluate(model, loader, loss_fn):
             n += len(yb)
     return total_loss / n , correct / n
 
-# Step 7 - fit (not yet solved)
-# TODO: implement
+# Step 7 - fit
+import copy
+import torch
+import torch.nn as nn
+
+def fit(model, loaders, epochs=5, lr=0.05, seed=42):
+
+    # Set random seed
+    torch.manual_seed(seed)
+
+    # Define loss function and optimizer
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(model.parameters(), lr= lr)
+
+    # Initialize history
+    history = {
+        "train_loss": [],
+        "val_loss": [],
+        "val_acc": []
+    }
+
+    # Track the best model
+    best_acc = -1
+    best_epoch = 0
+    best_state = None
+
+    # Training loop
+    for epoch in range(epochs):
+
+        # Train for one epoch
+        train_loss = train_one_epoch(model, loaders["train"], loss_fn, optimizer)
+
+        # Evaluate on validation data
+        val_loss, val_acc = evaluate(model, loaders['val'], loss_fn)
+
+        # Record metrics
+        history['train_loss'].append(train_loss)
+        history['val_loss'].append(val_loss)
+        history['val_acc'].append(val_acc)
+
+        # Check whether this is the best epoch
+        if val_acc > best_acc:
+            best_acc = val_acc
+            best_epoch = epoch
+            best_state = copy.deepcopy(model.state_dict())
+    # Restore the best model weights
+    model.load_state_dict(best_state)
+
+    # Add best epoch to history
+    history["best_epoch"] = best_epoch
+
+    return history
 
 # Step 8 - lr_range_test (not yet solved)
 # TODO: implement
